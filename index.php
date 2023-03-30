@@ -1,4 +1,8 @@
 <?php
+
+echo $_ENV['APP_NAME'];
+die;
+
 $ip = isset($_GET['ip']) ? $_GET['ip'] : "192.168.4.250";
 
 if (filter_var($ip, FILTER_VALIDATE_IP)) {
