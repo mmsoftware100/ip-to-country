@@ -1,22 +1,56 @@
 <?php
+ini_set('display_errors', '1');
+ini_set('display_startup_errors', '1');
+error_reporting(E_ALL);
 
-echo $_ENV['APP_NAME'];
-die;
+require_once 'vendor/autoload.php';
 
-$ip = isset($_GET['ip']) ? $_GET['ip'] : "192.168.4.250";
+
+$dotenv = Dotenv\Dotenv::createUnsafeImmutable(dirname(__FILE__));
+
+
+$dotenv->load();
+
+
+$debug = isset($_ENV['APP_DEBUG']) ? $_ENV['APP_DEBUG'] : false;
+
+
+
+/*
+
+if($debug == "true"){
+    echo "it's true";
+}
+else{
+    echo "it's false";
+}
+*/
+
+
+//echo isset($_ENV['APP_NAMEa']) ? $_ENV['APP_NAMEa'] : "APP_NAMEa";
+
+//echo "<h2>test</h2>";
+
+//die;
+
+$ip = isset($_GET['ip']) ? $_GET['ip'] : "127.0.0.1";
 
 if (filter_var($ip, FILTER_VALIDATE_IP)) {
-    //echo("$ip is a valid IP address");
+    if($debug == "true"){
+        echo("$ip is a valid IP address");
+    }
 } else {
-    //echo("$ip is not a valid IP address");
+    if($debug == "true"){
+        echo("$ip is not a valid IP address");
+    }
     echo "N/A";
     die;
 }
 
-$servername = "localhost";
-$username = "root";
-$password = "";
-$database = "news";
+$servername = isset($_ENV['DB_HOST']) ? $_ENV['DB_HOST'] : "localhost";
+$username = isset($_ENV['DB_USERNAME']) ? $_ENV['DB_USERNAME'] : "roott";
+$password = isset($_ENV['DB_PASSWORD']) ? $_ENV['DB_PASSWORD'] : "";
+$database = isset($_ENV['DB_DATABASE']) ? $_ENV['DB_DATABASE'] : "news";
 
 try {
   $conn = new PDO("mysql:host=$servername;dbname=$database", $username, $password);
@@ -24,7 +58,9 @@ try {
   $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
   //echo "Connected successfully";
 } catch(PDOException $e) {
-  //echo "Connection failed: " . $e->getMessage();
+  if($debug == "true"){
+        echo "Connection failed: " . $e->getMessage();
+    }
   echo "N/A";
   die;
 }
@@ -69,11 +105,5 @@ if(count($data) > 0){
 else{
     echo "N/A";
 }
-
-$conn->close();
-
-
-
-
 
 ?>
